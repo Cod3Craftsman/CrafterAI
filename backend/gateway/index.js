@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { getCurrentUser } from "./controllers/user.controller.js";
 import protect from "./middlewares/auth.middleware.js";
+import { proxyWithHeader } from "./utils/proxyWithHeader.js";
 dotenv.config();
 
 const port = process.env.PORT;
@@ -18,7 +19,10 @@ app.use(
 );
 app.use(cookieParser());
 app.use("/api/auth", proxy(process.env.AUTH_SERVICE));
+app.use("/api/chat", proxyWithHeader(process.env.CHAT_SERVICE));
+
 app.get("/api/me", protect, getCurrentUser);
+
 
 app.get("/", (req, res) => {
   res.json({ message: "Hello from gateway!" });
