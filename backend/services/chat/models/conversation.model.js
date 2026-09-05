@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const conversationSchema = new mongoose.Schema(
   {
     title: {
-      type: Sting,
+      type: String,
       default: "New Chat",
     },
     userId : {
