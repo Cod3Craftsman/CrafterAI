@@ -17,6 +17,12 @@ export const agent = async (req, res) => {
     });
 
     const response = result.aiResponse;
+    await axios.post(`${serverUrl}/save-message`, {
+      conversationId,
+      role: "assistant",
+      content: response,
+    });
+
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ message: `agent error ${error}` });
