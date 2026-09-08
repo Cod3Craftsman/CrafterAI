@@ -17,6 +17,7 @@ function ChatInput() {
       prompt: value,
       conversationId: selectedConversation?._id
     }
+    setValue("")
     const data = await sendMessage(payload)
     dispatch(addMessage({ role: "user", content: value }))
     dispatch(addMessage({ role: "assistant", content: data }))

@@ -3,6 +3,8 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 const groq = new ChatGroq({
   model: "openai/gpt-oss-120b",
+  temperature: 0.4,
+  maxTokens: 768,
 });
 
 const gemini = new ChatGoogleGenerativeAI({
