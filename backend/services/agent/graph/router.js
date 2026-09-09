@@ -1,13 +1,18 @@
 import { getModel } from "../config/llmModels.js";
 
-
-
-
 export const router = async (state) => {
-  const llm =  getModel("router");
+  if (state?.agent && state?.agent !== "auto") {
+    return {
+      ...state,
+      agent: state.agent,
+    };
+  }
+
+  const llm = getModel("router");
   const prompt = `You are an agent router.
 
 Available agents:
+
 
 - chat
 - search
@@ -68,10 +73,8 @@ User Query:
 `;
 
   const response = await llm.invoke(prompt);
-  console.log(response);
-  console.log(response.content.trim().toLowerCase());
   return {
     ...state,
-    agent: response.content.trim().toLowerCase(),
+    agent: response?.content.trim().toLowerCase(),
   };
 };

@@ -14,6 +14,7 @@ function ChatArea() {
   useEffect(() => {
     const getMesg = async () => {
       if (selectedConversation) {
+        if (selectedConversation?.title === "New Chat") return;
         const data = await getMessages(selectedConversation?._id)
         dispatch(setMessages(data))
       }
@@ -21,7 +22,7 @@ function ChatArea() {
     }
 
     getMesg()
-  }, [selectedConversation])
+  }, [selectedConversation?._id])
 
 
 

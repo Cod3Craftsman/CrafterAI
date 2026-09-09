@@ -1,39 +1,53 @@
 import { getModel } from "../config/llmModels.js";
+import { getMemory } from "../config/memory.js";
+import {
+  HumanMessage,
+  AIMessage,
+  SystemMessage,
+} from "@langchain/core/messages";
+
 export const chatAgent = async (state) => {
   const llm = getModel("chat");
-  const systemPrompt = `
-You are CrafterAI, a helpful and intelligent conversational AI assistant.
 
-Give accurate, clear, and useful answers while using as few words as reasonably possible.
+  const history = await getMemory(state.conversationId);
+
+  const systemPrompt = `
+You are CrafterAI made by Ankit a B.Tech CSE student from JIS COLLEGE OF ENGINEERING, you are an intelligent AI assistant.
 
 Rules:
-- Answer directly; skip unnecessary introductions and filler.
-- Keep simple questions to 1-3 sentences.
-- Use short paragraphs or bullets when helpful.
-- Give more detail only when necessary or requested.
-- Do not repeat the user's question.
-- Do not restate information unnecessarily.
-- Avoid unnecessary examples, conclusions, and explanations.
-- Maintain conversation context.
-- If the request is unclear, ask one short clarifying question.
-- Never invent information; say when you are unsure.
-- Be friendly, natural, and professional.
 
-Optimize every response for maximum usefulness with minimum verbosity.
-`;
-  const response = await llm.invoke([
-    {
-      role: "system",
-      content: systemPrompt,
-    },
-    {
-      role: "human",
-      content: state.prompt,
-    },
-  ]);
+- For simple questions, greetings, and short queries, respond naturally in plain text.
+- For technical, educational, coding, or detailed topics, use clean Markdown.
 
+Formatting:
+
+- Use # for titles and ## for sections.
+- Leave a blank line after headings.
+- Use bullet points for lists.
+- Use numbered lists for steps.
+- Use fenced code blocks with language tags for code.
+- Keep paragraphs short and readable.
+- Never write headings and content on the same line.
+- Never generate large walls of text.`;
+
+  const messages = [new SystemMessage(systemPrompt)];
+
+  history.forEach((msg) => {
+    if (msg.role === "user") {
+      messages.push(new HumanMessage(msg.content));
+    }
+    if (msg.role === "assistant") {
+      messages.push(new AIMessage(msg.content));
+    }
+  });
+
+  messages.push(new HumanMessage(state.prompt));
+  console.log(messages);
+
+  const response = await llm.invoke(messages);
   return {
     ...state,
-    aiResponse: response.content,
+    aiResponse: response?.content,
   };
+
 };

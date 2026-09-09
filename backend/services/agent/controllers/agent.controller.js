@@ -1,9 +1,22 @@
 import axios from "axios";
 import { graph } from "../graph/graph.js";
+import { addMessage } from "../config/memory.js";
 
 export const agent = async (req, res) => {
   try {
-    const { prompt, conversationId } = req.body;
+    const { prompt, conversationId, agent } = req.body;
+
+    const result = await graph.invoke({
+      prompt,
+      conversationId,
+      agent,
+    });
+    const response = result.aiResponse;
+
+    // short term memory-redis
+    await addMessage(conversationId, "user", prompt);
+    await addMessage(conversationId, "assistant", response);
+
     const serverUrl = process.env.CHAT_SERVICE;
     await axios.post(`${serverUrl}/save-message`, {
       conversationId,
@@ -11,12 +24,6 @@ export const agent = async (req, res) => {
       content: prompt,
     });
 
-    const result = await graph.invoke({
-      prompt,
-      conversationId,
-    });
-
-    const response = result.aiResponse;
     await axios.post(`${serverUrl}/save-message`, {
       conversationId,
       role: "assistant",

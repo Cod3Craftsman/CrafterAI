@@ -1,4 +1,4 @@
-import React from 'react'
+
 import api from '../../utils/axios.js'
 
 async function sendMessage(payload) {
@@ -6,8 +6,8 @@ async function sendMessage(payload) {
     const {data} = await api.post("/api/agent/chat" , payload)
     return data;
   } catch (error) {
-    console.log(error)
-    return null 
+    console.error("API ERROR:", error.response?.data);
+    throw error;
   }
 }
 
