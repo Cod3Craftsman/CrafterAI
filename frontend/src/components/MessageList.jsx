@@ -47,6 +47,7 @@ function MessageList() {
               <MessageBubble
                 role={msg?.role}
                 content={msg?.content}
+                images={msg?.images || [] }
               />
             </div>
           ))}

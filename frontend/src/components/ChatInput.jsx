@@ -48,7 +48,7 @@ function ChatInput() {
     dispatch(addMessage({ role: "user", content: value }))
     setValue("")
     const data = await sendMessage(payload)
-    dispatch(addMessage({ role: "assistant", content: data }))
+    dispatch(addMessage({ role: "assistant", content: data.answer, images: data.images }))
     console.log(data)
   }
 
@@ -98,7 +98,7 @@ function ChatInput() {
 
 
   return (
-    <div className="w-full overflow-hidden px-3 md:px-5 py-4 mb-5 border-t border-white/[0.06] bg-[#0d0f14]">
+    <div className="w-full h-[220px] overflow-hidden px-3 md:px-5 py-4 mb-5 border-t border-white/[0.06] bg-[#0d0f14]">
       <div className="flex flex-col gap-3 bg-white/[0.03] border border-white/[0.07] rounded-2xl px-4 pt-3.5 pb-3 shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
 
         {/* Agents */}

@@ -13,10 +13,11 @@ const messageSchema = new mongoose.Schema(
     },
 
     content: String,
+
+    images: [String],
   },
   { timestamps: true },
 );
 
-
-const Message = mongoose.model("Message" , messageSchema)
-export default Message
+const Message = mongoose.model("Message", messageSchema);
+export default Message;

@@ -12,6 +12,7 @@ export const agent = async (req, res) => {
       agent,
     });
     const response = result.aiResponse;
+    const images = result?.images || [];
 
     // short term memory-redis
     await addMessage(conversationId, "user", prompt);
@@ -28,9 +29,13 @@ export const agent = async (req, res) => {
       conversationId,
       role: "assistant",
       content: response,
+      images: response?.images
     });
 
-    return res.status(200).json(response);
+    return res.status(200).json({
+      answer: response,
+      images: images,
+    });
   } catch (error) {
     return res.status(500).json({ message: `agent error ${error}` });
   }
