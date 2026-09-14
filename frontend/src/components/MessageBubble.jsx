@@ -1,20 +1,44 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import remarkGfm from "remark-gfm"
 import Markdown from "react-markdown"
-import { ExternalLink, X } from "lucide-react"
+import { Check, Copy, ExternalLink, X } from "lucide-react"
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+
 
 function MessageBubble({ role, content, images }) {
-  const isUser = role == "user"
+  const isUser = role === "user"
   const [lightBox, setLightBox] = useState(null)
+  const [copyCode, setCopyCode] = useState("")
+  const timeoutRef = useRef(null);
+
+
+
+const handleCopyCode = async (code) => {
+  await navigator.clipboard.writeText(code);
+  setCopyCode(code);
+
+  clearTimeout(timeoutRef.current);
+
+  timeoutRef.current = setTimeout(() => {
+    setCopyCode("");
+  }, 5000);
+};
+
+useEffect(() => {
+  return () => clearTimeout(timeoutRef.current);
+}, []);
+
+
+
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[72%] px-4 py-3 rounded-2xl text-[13.5px] leading-relaxed shadow-sm transition-all duration-200 ${
-          isUser
-            ? "bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 text-white rounded-tr-md shadow-indigo-500/10"
-            : "bg-white/[0.045] backdrop-blur-xl border border-white/[0.08] text-slate-200 rounded-tl-md shadow-black/10 hover:bg-white/[0.055]"
-        }`}
+        className={`max-w-[72%] px-4 py-3 rounded-2xl text-[13.5px] leading-relaxed shadow-sm transition-all duration-200 ${isUser
+          ? "bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 text-white rounded-tr-md shadow-indigo-500/10"
+          : "bg-white/[0.045] backdrop-blur-xl border border-white/[0.08] text-slate-200 rounded-tl-md shadow-black/10 hover:bg-white/[0.055]"
+          }`}
       >
 
         {/* Images */}
@@ -35,11 +59,10 @@ function MessageBubble({ role, content, images }) {
 
         {/* Markdown */}
         <div
-          className={`prose prose-sm max-w-none ${
-            isUser
-              ? "prose-invert prose-p:text-white prose-headings:text-white prose-strong:text-white prose-code:text-white"
-              : "prose-invert prose-p:text-slate-200 prose-headings:text-slate-100 prose-strong:text-white prose-code:text-indigo-300"
-          }`}
+          className={`prose prose-sm max-w-none ${isUser
+            ? "prose-invert prose-p:text-white prose-headings:text-white prose-strong:text-white prose-code:text-white"
+            : "prose-invert prose-p:text-slate-200 prose-headings:text-slate-100 prose-strong:text-white prose-code:text-indigo-300"
+            }`}
         >
           <Markdown
             remarkPlugins={[remarkGfm]}
@@ -140,7 +163,7 @@ function MessageBubble({ role, content, images }) {
                 /* Inline code */
                 if (!className) {
                   return (
-                    <code className="px-1.5 py-0.5 rounded bg-white/10 text-pink-400">
+                    <code className="px-1.5 py-0.5 rounded bg-white/10 text-indigo-300">
                       {value}
                     </code>
                   )
@@ -156,14 +179,46 @@ function MessageBubble({ role, content, images }) {
                       <span className="uppercase text-xs text-slate-400">
                         {language || "code"}
                       </span>
+
+                      <button className="cursor-pointer flex items-center gap-1 text-xs" onClick={() => handleCopyCode(value)}>
+                        {
+                          copyCode === value ?
+
+                            <>
+                              <Check size={14}/>
+                              Copied
+                            </>
+
+                            : <>
+                              <Copy size={14}/>
+                              Copy
+                            </>
+                        }
+                      </button>
                     </div>
 
+                    <SyntaxHighlighter
+                      language={language}
+                      style={oneDark}
+                      showLineNumbers
+                      wrapLines
+                      wrapLongLines
+                      startingLineNumber={1}
+                      lineNumberStyle={{ minWidth: "2.5em" }}
+                      customStyle={{
+                        padding: "20px",
+                        borderRadius: "8px",
+                        fontSize: "14px",
+                        overflowX: "auto",
+                      }}
+                    >
+                      {value}
+                    </SyntaxHighlighter>
+
+
+
+
                     {/* Code content */}
-                    <pre className="overflow-x-auto p-4 text-[13px] leading-6">
-                      <code className={className}>
-                        {value}
-                      </code>
-                    </pre>
 
                   </div>
                 )
