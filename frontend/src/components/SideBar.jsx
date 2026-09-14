@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Coins, LogOut, MessageSquare, PanelLeftIcon, PanelRight, PenBoxIcon, PenSquare, Plus, User } from "lucide-react"
+import { Coins, LogOut, MessageSquare, PanelLeftClose, PanelRightClose, PenSquare, Plus, User } from "lucide-react"
 import { getConversations } from '../features/getConversations.js'
 import { createConversation } from '../features/createConversation.js'
 import { useDispatch, useSelector } from "react-redux"
@@ -53,7 +53,7 @@ function SideBar() {
         <button title='Sidebar' className='flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer mb-1'
           onClick={() => setCollapsed(prev => !prev)}
         >
-          <PanelRight />
+          <PanelRightClose />
         </button>
 
 
@@ -105,7 +105,7 @@ function SideBar() {
 
           {/* open-close sidebar */}
           <div title='Sidebar' className='hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer' onClick={() => setCollapsed(true)}>
-            <PanelLeftIcon />
+            <PanelLeftClose />
           </div>
 
 

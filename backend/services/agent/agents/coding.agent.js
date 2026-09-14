@@ -28,12 +28,17 @@ ${state.prompt}
     const prompt = `
 You are CrafterAI Coding Agent.
 
-Generate the requested project.
+Generate the requested project or code.
 
-Default stack:
+Default stack for web projects:
 - HTML
 - CSS
 - JavaScript
+
+For programming/code-only requests:
+- Use the programming language explicitly requested by the user (C, C++, Java, Python, etc.).
+- Do not generate HTML/CSS/JavaScript unless the user asks for a web project.
+- If no language is specified for a programming problem, infer the most appropriate language from the user's request.
 
 Use React / Next.js / Vue, etc. ONLY if explicitly requested.
 
@@ -49,6 +54,16 @@ Rules:
 - Generate complete, functional code.
 - Ensure all files work together correctly.
 - Do not omit required code.
+- Use Unsplash images if needed, do not add placeholders.
+
+
+Token Usage Rules:
+- You have a limited output budget of approximately 3072 tokens per request.
+- Use the available tokens wisely.
+- Keep the code concise and avoid unnecessary comments, whitespace, repetition, or explanations.
+- Prioritize complete and functional code over verbose code.
+- Do not sacrifice required functionality, responsiveness, or important UI details just to reduce token usage.
+- Ensure the response is complete and does not get truncated.
 
 Return ONLY valid JSON.
 
@@ -93,10 +108,10 @@ ${state.prompt}
       .replace(/\s*```$/, "")
       .trim();
 
-    
+    console.log("CLEANRESPONSE: ", cleanResponse);
 
-      console.log("CLEANRESPONSE: ", cleanResponse);
     const data = JSON.parse(cleanResponse);
+
     return {
       ...state,
       aiResponse: "Code generated successfully!!",
@@ -111,7 +126,7 @@ ${state.prompt}
     };
   }
 
-  //  CODE REVIEW AND OTHERS
+  // CODE REVIEW AND OTHERS
   const res = await llm.invoke(
     `
 The user's request is:
@@ -143,6 +158,7 @@ User Request: ${state.prompt}
   );
 
   const data = res.content;
+
   return {
     ...state,
     aiResponse: data,
