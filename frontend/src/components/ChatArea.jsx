@@ -10,6 +10,7 @@ function ChatArea() {
 
   const { selectedConversation } = useSelector(state => state.conversation)
   const dispatch = useDispatch()
+  const { messages } = useSelector(state => state.message)
 
   useEffect(() => {
     const getMesg = async () => {
@@ -27,6 +28,15 @@ function ChatArea() {
   }, [selectedConversation?._id])
 
 
+  useEffect(() => {
+    const latestArtifactMessage = [...messages]
+      .reverse()
+      .find(msg => msg.artifacts?.length > 0)
+
+    if (latestArtifactMessage) {
+      dispatch(setArtifacts(latestArtifactMessage.artifacts))
+    }
+  }, [messages])
 
 
   return (

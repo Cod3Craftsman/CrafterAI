@@ -1,11 +1,29 @@
 import { Sparkles } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import MessageBubble from './MessageBubble'
+import LoadingAnimation from './LoadingAnimation'
 
 function MessageList() {
   const { selectedConversation } = useSelector(state => state.conversation)
-  const { messages } = useSelector(state => state.message)
+  const { messages, isLoading } = useSelector(state => state.message)
+  const bottomRef = useRef(null)
+
+
+  useEffect(()=>{
+    requestAnimationFrame(()=> {
+      bottomRef?.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end"
+      })
+    })
+  },[messages?.length , isLoading])
+
+
+
+
+
+
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]">
@@ -47,13 +65,22 @@ function MessageList() {
               <MessageBubble
                 role={msg?.role}
                 content={msg?.content}
-                images={msg?.images || [] }
+                images={msg?.images || []}
               />
             </div>
           ))}
+
+
+          {
+            isLoading &&
+            <LoadingAnimation />
+          }
+
         </div>
 
       )}
+
+      <div ref={bottomRef}></div>
 
     </div>
   )

@@ -38,7 +38,7 @@ Default stack for web projects:
 For programming/code-only requests:
 - Use the programming language explicitly requested by the user (C, C++, Java, Python, etc.).
 - Do not generate HTML/CSS/JavaScript unless the user asks for a web project.
-- If no language is specified for a programming problem, infer the most appropriate language from the user's request.
+- If no language is specified for a programming problem, infer the most appropriate language from the user's request , take only 1 programming language which will be most effective if not described by the user.
 
 Use React / Next.js / Vue, etc. ONLY if explicitly requested.
 

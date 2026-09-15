@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import remarkGfm from "remark-gfm"
 import Markdown from "react-markdown"
 import { Check, Copy, ExternalLink, X } from "lucide-react"
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 
@@ -14,20 +14,20 @@ function MessageBubble({ role, content, images }) {
 
 
 
-const handleCopyCode = async (code) => {
-  await navigator.clipboard.writeText(code);
-  setCopyCode(code);
+  const handleCopyCode = async (code) => {
+    await navigator.clipboard.writeText(code);
+    setCopyCode(code);
 
-  clearTimeout(timeoutRef.current);
+    clearTimeout(timeoutRef.current);
 
-  timeoutRef.current = setTimeout(() => {
-    setCopyCode("");
-  }, 5000);
-};
+    timeoutRef.current = setTimeout(() => {
+      setCopyCode("");
+    }, 5000);
+  };
 
-useEffect(() => {
-  return () => clearTimeout(timeoutRef.current);
-}, []);
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current);
+  }, []);
 
 
 
@@ -185,12 +185,12 @@ useEffect(() => {
                           copyCode === value ?
 
                             <>
-                              <Check size={14}/>
+                              <Check size={14} />
                               Copied
                             </>
 
                             : <>
-                              <Copy size={14}/>
+                              <Copy size={14} />
                               Copy
                             </>
                         }
@@ -217,8 +217,6 @@ useEffect(() => {
 
 
 
-
-                    {/* Code content */}
 
                   </div>
                 )
@@ -288,6 +286,7 @@ useEffect(() => {
 
         </div>
       )}
+
     </div>
   )
 }
