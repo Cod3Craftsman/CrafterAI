@@ -222,6 +222,20 @@ function MessageBubble({ role, content, images }) {
                 )
               },
 
+              img: ({ src }) => {
+                if (!src) return null;
+
+                return (
+                  <img
+                    src={src}
+                    onClick={() => setLightBox(src)}
+                    loading="lazy"
+                    onError={(e) => e.currentTarget.remove()}
+                    className="w-40 h-28 rounded-xl object-cover border border-white/10 cursor-pointer hover:opacity-90 transition"
+                  />
+                );
+              },
+
               /* Pre */
               pre: ({ children }) => (
                 <>
@@ -266,28 +280,30 @@ function MessageBubble({ role, content, images }) {
       </div>
 
       {/* Lightbox */}
-      {lightBox && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
+      {
+        lightBox && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
 
-          {/* Close Button */}
-          <button
-            onClick={() => setLightBox(null)}
-            className="absolute top-5 right-5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 cursor-pointer transition"
-          >
-            <X size={20} />
-          </button>
+            {/* Close Button */}
+            <button
+              onClick={() => setLightBox(null)}
+              className="absolute top-5 right-5 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 cursor-pointer transition"
+            >
+              <X size={20} />
+            </button>
 
-          {/* Full Image */}
-          <img
-            src={lightBox}
-            onClick={(e) => e.stopPropagation()}
-            className="max-w-[90vw] max-h-[85vh] rounded-2xl border border-white/10 shadow-2xl object-contain"
-          />
+            {/* Full Image */}
+            <img
+              src={lightBox}
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-[90vw] max-h-[85vh] rounded-2xl border border-white/10 shadow-2xl object-contain"
+            />
 
-        </div>
-      )}
+          </div>
+        )
+      }
 
-    </div>
+    </div >
   )
 }
 
