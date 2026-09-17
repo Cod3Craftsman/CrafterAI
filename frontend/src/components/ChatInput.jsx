@@ -32,6 +32,7 @@ function ChatInput() {
   const dispatch = useDispatch()
   const [selectedAgent, setSelectedAgent] = useState("Auto")
   const [showAgents, setShowAgents] = useState(false)
+  const { isLoading } = useSelector(state => state.message)
 
   const handleSendMessage = async () => {
     dispatch(setLoading(true))
@@ -134,20 +135,24 @@ function ChatInput() {
             const Icon = agent.icon
 
             return (
-              <div
-                onClick={() => setSelectedAgent(agent.label)}
+              <button
+                onClick={() => setSelectedAgent(agent?.label)}
+                disabled={isLoading}
                 key={agent.label}
                 className={`
-                  group relative flex items-center gap-2
-                  px-3.5 py-2 rounded-xl
-                  border cursor-pointer select-none
-                  transition-all duration-200
-                  backdrop-blur-md
-                  ${isActive
+  group relative flex items-center gap-2
+  px-3.5 py-2 rounded-xl
+  border select-none transition-all duration-200
+  backdrop-blur-md
+  ${isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
+                  }
+  ${isActive
                     ? "bg-indigo-500/[0.14] border-indigo-400/30 text-indigo-300 shadow-[0_0_20px_rgba(99,102,241,0.12)]"
                     : "bg-white/[0.025] border-white/[0.06] text-slate-500 hover:bg-white/[0.06] hover:border-white/[0.12] hover:text-slate-300"
                   }
-                `}
+`}
               >
 
                 {isActive && (
@@ -172,7 +177,7 @@ function ChatInput() {
                   {agent.label}
                 </span>
 
-              </div>
+              </button>
             )
           })}
 
