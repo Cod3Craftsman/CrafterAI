@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Coins, LogOut, Menu, MessageSquare, PanelLeftClose, PanelRightClose, PenSquare, Plus, User, X } from "lucide-react"
+import { Trash2, LogOut, Menu, MessageCircle, MessageSquare, PanelLeftClose, PanelRightClose, PenSquare, Plus, User, X } from "lucide-react"
 import { getConversations } from '../features/getConversations.js'
 import { createConversation } from '../features/createConversation.js'
 import { useDispatch, useSelector } from "react-redux"
-import { setConversations, addConversation, setSelectConversation } from "../redux/conversationSlice.js"
+import { setConversations, addConversation, setSelectConversation, removeConversation } from "../redux/conversationSlice.js"
+import { deleteConversation } from '../features/deleteConversation.js'
 import { setUserData } from "../redux/userSlice.js"
 import logOut from '../features/logOut.js'
 
@@ -18,6 +19,7 @@ function SideBar() {
   const { userData } = useSelector(state => state.user)
   const [imageError, setImageError] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
 
 
 
@@ -40,10 +42,23 @@ function SideBar() {
   }
 
 
-  const handleLogout = async () => {
-    logOut();
-    dispatch(setUserData(null))
+  const handleDeleteConversation = async (conversationId) => {
+    try {
+      await deleteConversation(conversationId)
+      dispatch(removeConversation(conversationId))
+    } catch (error) {
+      console.log("Delete conversation error:", error)
+    }
   }
+
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    setTimeout(() => {
+      logOut();
+      dispatch(setUserData(null));
+    }, 2000);
+  };
 
 
 
@@ -58,11 +73,19 @@ function SideBar() {
         </button>
 
 
-        <button title='New Chat' onClick={() => dispatch(setSelectConversation(null))}
-          className='flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer'
-        >
-          <Plus size={17} />
-        </button>
+
+        {
+          conversations.length > 0 && (
+            <button title='New Chat' onClick={() => dispatch(setSelectConversation(null))}
+              className='flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer'
+            >
+              <Plus size={17} />
+            </button>
+          )
+        }
+
+
+
 
 
 
@@ -75,7 +98,7 @@ function SideBar() {
 
 
                 <div className={`flex items-center justify-center shrink-0 w-[20px] h-[20px] rounded-lg transition-colors duration-150 ${isActive ? "bg-indigo-500/15 text-indigo-400" : "bg-white/[0.05] text-slate-500"}`}>
-                  <MessageSquare size={13} />
+                  <MessageCircle size={13} />
                 </div>
 
               </div>
@@ -140,24 +163,35 @@ function SideBar() {
               <X />
             </button>
 
-            <span>CrafterAI</span>
-            <span className='text-[10px] font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full tracking-wide'>Free</span>
+            <span className='font-semibold'>CrafterAI</span>
 
-            <button title='New Chat' className='flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer' onClick={() => dispatch(setSelectConversation(null))}>
-              <PenSquare size={14} />
-            </button>
+
+            {
+              conversations.length > 0 && (
+                <button title='New Chat' className='flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer' onClick={() => dispatch(setSelectConversation(null))}>
+                  <PenSquare size={14} />
+                </button>
+              )
+            }
+
           </div>
 
 
 
           {/* New chat div */}
-          <div className='px-4 pt-4 pb-1'>
-            <button className='w-full flex items-center justify-center gap-2 text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-violet-700 rounded-xl py-[10px] border-none cursor-pointer hover:opacity-90 transition-opacity duration-150'
-              onClick={() => dispatch(setSelectConversation(null))}>
-              <Plus size={15} />
-              New Chat
-            </button>
-          </div>
+
+          {
+            conversations.length > 0 && (
+              <div className='px-4 pt-4 pb-1'>
+                <button className='w-full flex items-center justify-center gap-2 text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-violet-700 rounded-xl py-[10px] border-none cursor-pointer hover:opacity-90 transition-opacity duration-150'
+                  onClick={() => dispatch(setSelectConversation(null))}>
+                  <Plus size={15} />
+                  New Chat
+                </button>
+              </div>
+            )
+          }
+
 
 
 
@@ -170,22 +204,46 @@ function SideBar() {
             )}
 
 
+
+
           <div className='p-5 flex-1 overflow-y-auto px-2.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'>
             {conversations.map((conv, i) => {
               const isActive = selectedConversation?._id == conv?._id
               return (
-                <div key={i} onClick={() => {
-                  dispatch(setSelectConversation(conv))
-                  setMobileOpen(false)
-                }}
-                  className={`flex items-center gap-2.5 cursor-pointer mb-0.5 px-3 py-2 rounded-[10px] border transition-colors duration-150 hover:bg-white/5 ${isActive ? "bg-indigo-500/10 border-indigo-500/[0.18]" : "bg-transparent border-transparent"}`}>
+                <div
+                  key={i}
+                  onClick={() => {
+                    dispatch(setSelectConversation(conv))
+                    setMobileOpen(false)
+                  }}
+                  className={`flex items-center gap-2.5 cursor-pointer mb-0.5 px-3 py-2 rounded-[10px] border transition-colors duration-150 hover:bg-white/5 group ${isActive
+                    ? "bg-indigo-500/10 border-indigo-500/[0.18]"
+                    : "bg-transparent border-transparent"
+                    }`}
+                >
 
 
                   <div className={`flex items-center justify-center shrink-0 w-[28px] h-[28px] rounded-lg transition-colors duration-150 ${isActive ? "bg-indigo-500/15 text-indigo-400" : "bg-white/[0.05] text-slate-500"}`}>
-                    <MessageSquare size={13} />
+                    <MessageCircle size={13} />
                   </div>
 
-                  <span className={`text-[13px] font-medium truncate ${isActive ? "text-slate-100" : "text-slate-300"}`}>{conv?.title || "New Chat"}</span>
+                  <span
+                    className={`capitalize text-[13px] font-medium truncate flex-1 ${isActive ? "text-slate-100" : "text-slate-300"
+                      }`}
+                  >
+                    {conv?.title || "New Chat"}
+                  </span>
+
+                  <button
+                    title="Delete conversation"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeleteConversation(conv._id)
+                    }}
+                    className="shrink-0 flex items-center justify-center w-6 h-6 rounded-md text-slate-600 hover:text-red-400 hover:bg-white/5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-150 cursor-pointer"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               )
             })}
@@ -210,19 +268,25 @@ function SideBar() {
 
                 <div className='flex-1 min-w-0'>
                   <p className='text-[13.5px] font-semibold text-slate-100 truncate'>{userData?.name || "user"}</p>
-                  <p className='text-[11px] text-slate-600'>{"Free Plan"}</p>
                 </div>
 
-                {/* credits and logout */}
+                {/*logout */}
 
                 <div className='flex gap-1'>
-                  <button className='flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-yellow-600 duration-150 hover:bg-white/[0.08] hover:text-slate-400 transition-all'>
-                    <Coins size={16} />
-                  </button>
 
 
-                  <button className='flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-slate-600 cursor-pointer hover:bg-white/[0.08] hover:text-slate-400 transition-all duration-150' onClick={handleLogout}>
-                    <LogOut size={16} />
+
+                  <button
+                    title="Log Out"
+                    disabled={loggingOut}
+                    className="flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-red-600 hover:bg-white/[0.08] hover:text-red-400 transition-all duration-150 disabled:opacity-50 cursor-pointer"
+                    onClick={handleLogout}
+                  >
+                    {loggingOut ? (
+                      <div className="w-4 h-4 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                    ) : (
+                      <LogOut size={16} />
+                    )}
                   </button>
 
                 </div>

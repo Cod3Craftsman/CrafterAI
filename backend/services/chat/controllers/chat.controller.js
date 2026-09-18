@@ -42,6 +42,8 @@ export const updateConversation = async (req, res) => {
 
 export const saveMessage = async (req, res) => {
   try {
+    console.log("SAVE MESSAGE BODY:", req.body);
+
     const { conversationId, role, content, images, artifacts } = req.body;
     const message = await Message.create({
       conversationId,
@@ -56,10 +58,29 @@ export const saveMessage = async (req, res) => {
   }
 };
 
+export const deleteConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    await Conversation.findByIdAndDelete(conversationId);
+
+    await Message.deleteMany({
+      conversationId,
+    });
+
+    return res.status(200).json({
+      message: "Conversation deleted successfully",
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `deleteConversation error ${error}` });
+  }
+};
+
 export const getMessages = async (req, res) => {
   try {
     const messages = await Message.find({
-      conversationId : req.params.conversationId,
+      conversationId: req.params.conversationId,
     }).sort({ createdAt: 1 });
     return res.status(200).json(messages);
   } catch (error) {

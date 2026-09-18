@@ -2,8 +2,6 @@ import { ChatGroq } from "@langchain/groq";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenRouter } from "@langchain/openrouter";
 
-
-
 const groq = new ChatGroq({
   model: "openai/gpt-oss-120b",
   temperature: 0.4,
@@ -13,7 +11,6 @@ const groq = new ChatGroq({
 const gemini = new ChatGoogleGenerativeAI({
   model: "gemini-3.6-flash",
 });
-
 
 const openRouter = new ChatOpenRouter({
   model: "deepseek/deepseek-chat",
@@ -39,6 +36,11 @@ export const getModel = (agent) => {
       return gemini;
 
     case "vision":
+      return gemini;
+
+    case "imageAnalyzer":
+      return gemini;
+    case "pdf-rag":
       return gemini;
     default:
       return groq;

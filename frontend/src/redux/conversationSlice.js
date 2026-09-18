@@ -16,6 +16,17 @@ const conversationSlice = createSlice({
       state.conversations.unshift(action.payload); // unshift-> adds conversation to the 0th index of array
     },
 
+    removeConversation: (state, action) => {
+      const conversationId = action.payload;
+      state.conversations = state.conversations.filter(
+        (conv) => conv._id !== conversationId,
+      );
+
+      if (state.selectedConversation?._id === conversationId) {
+        state.selectedConversation = null;
+      }
+    },
+
     setSelectConversation: (state, action) => {
       state.selectedConversation = action.payload;
     },
@@ -28,10 +39,15 @@ const conversationSlice = createSlice({
       if (state.selectedConversation?._id === conversationId) {
         state.selectedConversation = { ...state.selectedConversation, title };
       }
-    },  
+    },
   },
 });
 
-export const { setConversations, addConversation, setSelectConversation , setConvTitle} =
-  conversationSlice.actions;
+export const {
+  setConversations,
+  addConversation,
+  setSelectConversation,
+  setConvTitle,
+  removeConversation,
+} = conversationSlice.actions;
 export default conversationSlice.reducer;

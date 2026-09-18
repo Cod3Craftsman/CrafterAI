@@ -1,4 +1,4 @@
-import { MessageSquare } from "lucide-react"
+import { MessageSquareText } from "lucide-react"
 import { useSelector } from "react-redux"
 
 
@@ -17,10 +17,10 @@ function Nav() {
       {selectedConversation && (
         <div className="h-14 flex items-center gap-2.5 px-5 border-b border-white/[0.06] bg-[#0d0f14]">
           <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-            <MessageSquare size={13} className="text-indigo-400" />
+            <MessageSquareText size={13} className="text-indigo-400" />
           </div>
 
-          <div className="text-[14px] font-semibold text-slate-100 tracking-tight">
+          <div className="text-[14px] font-semibold text-slate-100 tracking-tight capitalize">
             {selectedConversation?.title || "New Chat"}
           </div>
 
