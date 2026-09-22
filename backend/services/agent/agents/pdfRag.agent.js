@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import { PDFParse } from "pdf-parse";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { vectorStore } from "../config/vectordb.js";
+import { vectorStore } from "../config/vectorDb.js";
 import { getModel } from "../config/llmModels.js";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 
